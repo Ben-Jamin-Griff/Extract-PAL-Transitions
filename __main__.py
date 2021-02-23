@@ -15,9 +15,10 @@ def collect_events(EventTimes,  dataFrameObject, data):
             serialNo = [f[0][:-11]]*120
             eventDf = data.iloc[x[0]-60:x[0]+60]
             eventDf = eventDf.assign(SerialNumber = serialNo)
+            eventDf = eventDf.assign(RecordingID = serialNo)
             eventDf = eventDf.assign(TransitionId = transitionIDs)
-            eventDf = eventDf[['TransitionId','SerialNumber','Time','Index','X', 'Y', 'Z']]
-            eventDf.columns = ['Transition Id', 'Serial Number', 'Time', 'Sample Number', 'X Axis', 'Y Axis', 'Z Axis']
+            eventDf = eventDf[['TransitionId', 'RecordingID', 'SerialNumber','Time','Index','X', 'Y', 'Z']]
+            eventDf.columns = ['Transition Id', 'Recording Id', 'Serial Number', 'Time', 'Sample Number', 'X Axis', 'Y Axis', 'Z Axis']
             dataFrameObject = dataFrameObject.append(eventDf, ignore_index = True)
     return dataFrameObject
 
@@ -26,13 +27,13 @@ def count_transitions(case):
     EventTimes = []
     idx = 0
     while idx < len(dfEvents.index)-1:
-        if case == 'SiSt':
+        if case == 'StSi':
             if dfEvents.iloc[idx, 3] != 0 and dfEvents.iloc[idx+1, 3] == 0:
                 eventTime = dfEvents.iloc[idx+1, 0]
                 EventTimes.append(eventTime)
                 Transitions += 1
             idx += 1
-        elif case == 'StSi':
+        elif case == 'SiSt':
             if dfEvents.iloc[idx, 3] == 0 and dfEvents.iloc[idx+1, 3] != 0:
                 eventTime = dfEvents.iloc[idx+1, 0]
                 EventTimes.append(eventTime)
