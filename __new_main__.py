@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import time
+from dask import dataframe as dd
 
 
 # Functions
@@ -84,7 +85,9 @@ for f in pairdFiles:
     dfObjStSi = pd.DataFrame(columns=['Transition Id', 'Serial Number', 'Time', 'Sample Number', 'X Axis', 'Y Axis', 'Z Axis'])
     
     # Load in the raw accel data into chunks
-    for chunk in pd.read_csv(f[1], chunksize=100000):
+    for chunk in dd.read_csv(f[1],  blocksize=25e6):
+        print(chunk)
+        breakpoint()
         chunk = chunk['sep=;'].apply(lambda x: pd.Series(x.split(';')))
         chunk.columns = ["Time", "Index", "X", "Y", "Z"]
         try:
